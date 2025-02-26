@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>كشري AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      --card-bg: rgba(255, 255, 255, 0.15);
+      --card-border: rgba(255, 255, 255, 0.2);
+      --accent-color: #ffcc29;
+      --text-color: #fff;
+      --btn-bg: #ffcc29;
+      --btn-hover: #e6b800;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    body {
+      background: var(--background);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    header {
+      width: 100%;
+      padding: 20px 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      border-bottom: 2px solid var(--accent-color);
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    nav {
+      margin-top: 10px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--text-color);
+      background: rgba(255, 255, 255, 0.2);
+      padding: 8px 15px;
+      border-radius: 20px;
+      margin: 5px;
+      display: inline-block;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      background: var(--accent-color);
+      color: #000;
+    }
+
+    main {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 1000px;
+      padding: 20px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(10px);
+      width: 280px;
+      padding: 20px;
+      border-radius: 15px;
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .card h2 {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+      opacity: 0.8;
+    }
+
+    .card button {
+      background: var(--btn-bg);
+      border: none;
+      padding: 8px 15px;
+      border-radius: 25px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .card button:hover {
+      background: var(--btn-hover);
+    }
+
+    footer {
+      width: 100%;
+      text-align: center;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      border-top: 2px solid var(--accent-color);
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2rem;
+      }
+      .card {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>كشري AI</h1>
+    <nav>
+        <a dir="rtl">الذكاء الاصطناعي بدون إنترنت</a>
+        <a dir="rtl" href="https://kosharyaidocs.blogspot.com/">آخر التحديثات</a>
+        <a dir="rtl">واجهة برمجية API</a>
+    </nav>
+</header>
+
+<main>
+    <section class="card" id="text-ai">
+        <h2>محادثة الذكاء الاصطناعي</h2>
+        <p>تواصل مع نماذج ذكاء اصطناعي متقدمة مثل (GPT-4، O1، O1 Mini، Claude 3 Opus).</p>
+        <button onclick="location.href = 'newchat.html';">الانتقال الى الصفحه</button>
+    </section>
+
+    <section class="card" id="image-ai">
+        <h2>إنشاء الصور بالذكاء الاصطناعي</h2>
+        <p>قم بإنشاء صور احترافية باستخدام نموذج Leonardo.</p>
+        <p><strong>ملاحظة:</strong> يدعم اللغة الإنجليزية فقط.</p>
+        <button onclick="location.href = 'newimage.html';">الانتقال الى الصفحه</button>
+    </section>
+
+    <section class="card" id="code-ai">
+        <h2>الذكاء الاصطناعي لكتابة الأكواد</h2>
+        <p>احصل على مساعدة في البرمجة مع نموذج ذكاء اصطناعي مدعوم من OpenAI.</p>
+        <button onclick="location.href = 'newcodeAI.html';">الانتقال الى الصفحه</button>
+    </section>
+
+    <section class="card" id="premium-ai">
+        <h2>الذكاء الاصطناعي المتقدم (Premium)</h2>
+        <p>استمتع بتجربة أقوى نماذج الذكاء الاصطناعي مثل O3-Mini.</p>
+        <button onclick="location.href = 'encai.html';">الانتقال الى الصفحه</button>
+    </section>
+    <section class="card" id="clone-ai">
+      <h2>نسخ الصوت بالذكاء الاصطناعي</h2>
+      <p>نسخ الصوت بالذكاء الاصطناعي   <br>  <strong>جديد:</strong> دعم اللغه العربيه</p>
+      <button onclick="location.href = 'clone.html';">الانتقال الى الصفحه</button>
+  </section>
+    <section class="card" id="premium-ai">
+      <h2>استكشف ماذا نريد اضافته قريبا</h2>
+      <p>استكشف الآن ماذا نريد إضافته قريبًا.</p>
+      <button onclick="location.href = 'https://ifreamlikedevtools3.my.canva.site/kosharyai';">الانتقال الى الصفحه</button>
+  </section>
+</main>
+
+<footer>
+    &copy; 2025 كشري AI - جميع الحقوق محفوظة.
+</footer>
+
+</body>
+</html>

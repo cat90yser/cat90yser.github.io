@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="icon" type="image/x-icon" href="https://static-00.iconduck.com/assets.00/cooked-rice-emoji-512x504-hmto2qc7.png">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Image Generation</title>
+    <style>
+      /* styles.css */
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #0f0f11;
+    color: #333;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color:  #303136	;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #ffffff	;
+}
+
+.input-area {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-area label {
+    margin-bottom: 5px;
+    color: #aaaaaa	;
+    font-weight: bold;
+}
+
+.input-area input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.input-area button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007acc;
+    color: white;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.input-area button:hover {
+    background-color: #00548bcb;
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsive grid */
+    gap: 15px;
+}
+
+.image-grid img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}  
+    </style>
+</head>
+<body dir="rtl">
+    <div class="container">
+        <h1>صناعه صور (Leonardo)</h1>
+        <div class="input-area">
+            <label for="prompt">اكتب وصف الصوره:</label>
+            <input type="text" id="prompt" placeholder="اكتب هنا...">
+            <button id="generateBtn">أصنع الصوره</button>
+        </div>
+        <h4 style="color: #aaaaaa;">يدعم اللغه الانجليزيه فقط</h4>
+        <div id="image-container" class="image-grid">
+            <!-- Images will be displayed here -->
+        </div>
+    </div>
+    <script>
+
+/* script.js */
+const tokenList = [
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNzRhNzA0YjAtMzA2ZS00ZjgzLWFiMDQtMzU3M2NiZmM3OWQ3IiwidHlwZSI6ImFwaV90b2tlbiJ9.xWWFMr2fRCkl_ENYRP68ICsT20E8srX5Ww5IJb4edN4",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiM2E2MTM5OTItYmMyYi00OWM4LWI2N2EtZTdjYWQxYjViNGQ4IiwidHlwZSI6ImFwaV90b2tlbiJ9.Eo7_1lh6ciA2_Yy-_SGZT1hSIaeBG9jrdVZsfY9gIMs",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmU2MjA4ZGMtNjU1Ny00NTU5LTlhNzktMmQ5NTQ1ZDc1OTA2IiwidHlwZSI6ImFwaV90b2tlbiJ9.Wf07q-iGbO3qXaErIdjKL8aczX7qod6x9TlE1z37tJ8",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZWJlZWJmZDUtMTU5Ni00MTEyLTkwNWUtNTJlNjcyMzBlYjAzIiwidHlwZSI6ImFwaV90b2tlbiJ9.F5pKVpIGYFHjWj9WqKJMJa0CtYskGikZTzdcej53kao",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMmZmYjBhYTMtMzYxNC00MWQ4LTlhY2EtNTdhNTViY2UwNjFlIiwidHlwZSI6ImFwaV90b2tlbiJ9.5TbZlYihjz1nzkJdAy64_wa8gHJ1MQNrvImGEO_lAcA",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYWY5YjI0NmItNmJiMC00NGNjLWIzM2QtYzBlNzViZjQyMTVhIiwidHlwZSI6ImFwaV90b2tlbiJ9.apdLI53MjW8k7yqL8Z9guJbZg7XPyPruaZABe5GqSh4",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDhiM2I5OWUtNmM4ZC00MzU5LWI0NzktZTQ3M2RjZGQ2ZjgxIiwidHlwZSI6ImFwaV90b2tlbiJ9.QAvbWuqKqznqLki-3Q_uLUtl0UmWaYs78jOWsquZdMA",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZTJhMmY5OGMtMjFlMi00ZTlhLThlNTAtMWUzZTViODZkMzE1IiwidHlwZSI6ImFwaV90b2tlbiJ9.--meqosp2aprI8nNohWiP9eDdPOERv_4-_BAIcNW9HM",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTFmZDJhZmUtNGEyYi00MDIyLWFjNWYtNDJlN2MwZDc1NWY4IiwidHlwZSI6ImFwaV90b2tlbiJ9.w0cDMErTVkiQo2s4gibMRG21_2lTiDsXNrLSirmbtCI",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNzYwYzE2NGQtZjBhZC00ZGUwLTkyN2QtZmJmZGNkYmIwOGZiIiwidHlwZSI6ImFwaV90b2tlbiJ9.gIcye03CtEgTcM83bVSaZPhYr3FtG2uL6UT1xXQn2lc",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjE1NzNlNDMtN2VhOC00ZjM3LTg2ODQtODIzNmRjNWE3MTEzIiwidHlwZSI6ImFwaV90b2tlbiJ9.ICb1nzFL-24eQNGxv24FjERUaMQpqekfAZtMCkq2RYs",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZDdkYmQ5YTktZjFjYS00NDRhLWJmYjItN2ZmNGFjNWM2NDdjIiwidHlwZSI6ImFwaV90b2tlbiJ9.LzrI07mkqPRRFzHw6asdN-xaLXFGLv_Ot1qfY1_eBK0",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiOTNkYjNmMzUtYjM3OS00YjNmLTgwZjMtMWRjNzM0NDIyNmQxIiwidHlwZSI6ImFwaV90b2tlbiJ9.g8EHTs1xnWZGUYfGM5jT-Gs0d9mZu9vjozZSw6AG_Uk",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiY2MzNzdiNmItYjJjMC00MTI4LTk0M2QtYjliYWYwNmYwZTY2IiwidHlwZSI6ImFwaV90b2tlbiJ9.n49WpSihzfpFToGukkSjeXn4jGjSylkSicUMXftzsrI",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZmEzNmZhNGMtM2Q4Ny00MjhjLWJiMTQtZjczMzIyNDQ3NmI5IiwidHlwZSI6ImFwaV90b2tlbiJ9.E_dIBbfuhwmNlk2abuZ5NBUr9USpXnEPRJngLIBK_vc",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiOTgyYzVhYTktMWYxNi00ZDFjLWE1NDAtYzA3YzA2ZmNiZDE3IiwidHlwZSI6ImFwaV90b2tlbiJ9.XNnd1VCkeUTe2YkK8TmmNAKWMCw2LZ8rlnjuq9d3128",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjdhNjc5YzYtNWY2My00NGE5LWEwNzYtYjVmYTYwYmJiYzA2IiwidHlwZSI6ImFwaV90b2tlbiJ9.qkdxV32G2TbW5LpxbACtOqstfgmfYDRFyfrVn6KLwIc",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZTMxYTY3MWEtMjQ3Zi00NDYyLWI4ODMtOTc5YzEzZTFmYTNiIiwidHlwZSI6ImFwaV90b2tlbiJ9.i4FPDPicpYjLz15aqQt6Nx-W45rdMJNwKF1ZWii-zCs",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNGFiNzczNTMtNWIzNC00OTYwLWIxODQtNGUwODVkMTMzODUyIiwidHlwZSI6ImFwaV90b2tlbiJ9.TbWrdQasFPrP4mHyHxEIkf8_-B8xeCHnvVgnLe0ZlIk",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiODUyMTFiMjQtYTVkMC00MmM0LTgxYjYtYjFhYTI1NzljZDJjIiwidHlwZSI6ImFwaV90b2tlbiJ9.Bpo7tyAE9YjWWczXWFn7TmXcHprISnw8MFHHo0_h1gY",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiM2EzY2ZkOTQtOGU2OC00NTQzLThhOWQtOGU4NmQ4NTlhODdjIiwidHlwZSI6ImFwaV90b2tlbiJ9.I_MFPh7p5x28bcefIQ2iec5odCXgO0m2L1Qgrj7D1Fs",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZjA2NmY3MDgtZjcyOC00NDRmLTk4MTMtMDMyOTU4NjRhMmM5IiwidHlwZSI6ImFwaV90b2tlbiJ9.UQN0IDYpPQeIGz2E7-kMyyxbZKmAIdLs2IbiKsQlfAI",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZWVmNTM5ZWItNjkxYy00NmQ4LWFiNDUtNzZlNzgyNWI1MmY3IiwidHlwZSI6ImFwaV90b2tlbiJ9.DjVwtGnOaqTloDm-cfJv5LDhHVnCpzFj9P9kKkELgsc",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDkzNjViNDItMGIzYi00MzkzLTllNzItMTJiNDY4ZTk5ZTExIiwidHlwZSI6ImFwaV90b2tlbiJ9.KcnhsB_xWvDHvDkqpbEuL2oFxvTMPYaZR3CyeGoUM1E",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZjk5YzBhYWQtMDlkMS00MWMxLTliYTAtMDhhNGYwNTg3MWViIiwidHlwZSI6ImFwaV90b2tlbiJ9.O-K7flabFl4Gy66V9QNDLtJgt9n_mjPTXztATkXtfLw",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiY2QxYmMxZmUtZDk5ZS00ZTY3LWE3ZTctYjE5MjE1NzU2Mzk2IiwidHlwZSI6ImFwaV90b2tlbiJ9.SG_DOKunf1EMS17gnQc-nXytSVX6lDXln8n0SgaK6bQ",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiN2I2YmNhMWEtNWEyZS00NmVhLThkNzYtMjIzNDMzZGRlZWQyIiwidHlwZSI6ImFwaV90b2tlbiJ9.Luuk_1WfVjk-Gi7x9kaGKQdIdlsNQ77D_8PBpQJN570",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNTczNGE5ZDUtZjIzOS00NWYwLWFlNTgtNzkzZGZmNDE0M2EzIiwidHlwZSI6ImFwaV90b2tlbiJ9.v0GfCQJU3Pk5awB53tAjqxyW-87b9Xe40hKsaxBz5tQ",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMjZlY2M1OWMtMDE4Ni00NmNjLTgyNTctMDMwMzVmMzNhMDQyIiwidHlwZSI6ImFwaV90b2tlbiJ9.1hzlOmCmkb0Bz3G_SCSBevQP3kr20uwrsSMdsWGMUnM",
+];
+
+function pickRandomKey(tokenList) {
+    return tokenList[Math.floor(Math.random() * tokenList.length)];
+}
+
+document.getElementById('generateBtn').addEventListener('click', function() {
+    const promptText = document.getElementById('prompt').value;
+    const imageContainer = document.getElementById('image-container');
+    imageContainer.innerHTML = '<p>Generating image...</p>'; // Initial loading message
+
+    const selectedKey = pickRandomKey(tokenList);
+    const headers = {
+        "Authorization": "Bearer " + selectedKey,
+        "Content-Type": "application/json" // Specify content type as JSON
+    };
+
+    const payload = {
+        "providers": "leonardo",
+        "text": promptText,
+        "resolution": "512x512"
+    };
+
+    fetch("https://api.edenai.run/v2/image/generation", {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(payload) // Convert payload to JSON string
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        imageContainer.innerHTML = ''; // Clear loading message
+        if (data.leonardo && data.leonardo.items && data.leonardo.items.length > 0) {
+            data.leonardo.items.forEach(item => {
+                const img = document.createElement('img');
+                img.src = item.image_resource_url;
+                img.alt = promptText;
+                imageContainer.appendChild(img);
+            });
+        } else {
+            imageContainer.innerHTML = '<p>No images generated or error in response.</p>';
+            console.error("API Response:", data); // Log the full response for debugging
+        }
+    })
+    .catch(error => {
+        imageContainer.innerHTML = '<p>Error generating image. Please check console.</p>';
+        console.error("Fetch error:", error);
+    });
+});
+
+    </script>
+    <br>
+          <button onclick="location.href = 'index.html';">رجوع ←</button>
+
+    <style>* { font-family: 'Cairo', sans-serif !important; }</style>
+</body>
+</html>

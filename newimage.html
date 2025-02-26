@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+  <link rel="icon" type="image/x-icon" href="https://static-00.iconduck.com/assets.00/cooked-rice-emoji-512x504-hmto2qc7.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Generation (Leonardo)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #0f0f11;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .image-container {
+      max-width: 800px;
+      margin: 20px auto;
+      background-color: #19191d;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border: 1px solid #303136;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .input-area {
+      margin-bottom: 20px;
+    }
+    .image-container input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #303136;
+      border-radius: 5px;
+      background-color: #19191d;
+      color: #ffffff;
+    }
+    .image-container input::placeholder {
+      color: #aaaaaa;
+    }
+    .image-container button {
+      padding: 10px 20px;
+      background-color: #ffcc00;
+      color: #0f0f11;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .image-container button:hover {
+      background-color: #ffaa00;
+    }
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+      width: 100%;
+    }
+    .image-grid img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    h1, h4 {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="image-container">
+    <h1>Image Generation (Leonardo)</h1>
+    <div class="input-area">
+      <label for="imagePrompt">اكتب وصف الصوره:</label>
+      <input type="text" id="imagePrompt" placeholder="Type here...">
+      <button onclick="generateImage()">Generate Image</button>
+    </div>
+    <h4 style="color: #aaaaaa;">English language support only</h4>
+    <div id="imageGrid" class="image-grid">
+      <!-- Images will be displayed here -->
+    </div>
+  </div>
+  <script>
+    async function generateImage() {
+      const promptInput = document.getElementById('imagePrompt');
+      const promptText = promptInput.value.trim();
+      const imageGrid = document.getElementById('imageGrid');
+      if (!promptText) {
+        alert("Please enter a prompt to generate an image.");
+        return;
+      }
+      imageGrid.innerHTML = '<p>Generating image...</p>';
+      
+      try {
+        const response = await fetch('https://theflashdriveonmydesk.pythonanywhere.com/generate_image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: promptText })
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        if (data.image_urls && data.image_urls.length > 0) {
+          imageGrid.innerHTML = '';
+          data.image_urls.forEach(url => {
+            const img = document.createElement('img');
+            img.src = url;
+            img.alt = promptText;
+            imageGrid.appendChild(img);
+          });
+        } else {
+          imageGrid.innerHTML = '<p>No images were generated. Please check the prompt and try again.</p>';
+        }
+      } catch (error) {
+        console.error('Error generating image:', error);
+        imageGrid.innerHTML = '<p>Error generating image. See console for details.</p>';
+      }
+    }
+  </script>
+</body>
+</html>
